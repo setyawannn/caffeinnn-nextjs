@@ -1,18 +1,12 @@
 'use client'
 
-import { NextUIProvider } from '@nextui-org/react'
-import { ThemeProvider as NextThemesProvider } from 'next-themes'
+import NextUIProvider from '@/lib/provider/NextUIProvider'
+import ProgressProvider from '@/lib/provider/ProgressProvider'
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <NextUIProvider>
-      <NextThemesProvider
-        attribute='class'
-        defaultTheme='dark'
-        themes={['light', 'dark', 'modern']}
-      >
-        {children}
-      </NextThemesProvider>
+      <ProgressProvider>{children}</ProgressProvider>
     </NextUIProvider>
   )
 }
