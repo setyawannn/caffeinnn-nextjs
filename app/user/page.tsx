@@ -20,7 +20,7 @@ import { IUser } from '@/types/user-types'
 import axios from 'axios'
 import { getCookie } from 'cookies-next'
 import ModalUser from './ModalUser'
-import { useRouter } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 
@@ -46,6 +46,11 @@ const UserPage = () => {
   const router = useRouter()
 
   const token = getCookie('jwtToken')
+  const role = getCookie('role')
+
+  if (role !== 'ADMIN') {
+    redirect('/404')
+  }
 
   useEffect(() => {
     try {

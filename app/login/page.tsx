@@ -15,11 +15,11 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
-  // React.useEffect(() => {
-  //   if (hasCookie('jwtToken')) {
-  //     redirect('/')
-  //   }
-  // }, [])
+  React.useEffect(() => {
+    if (hasCookie('jwtToken')) {
+      redirect('/')
+    }
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target

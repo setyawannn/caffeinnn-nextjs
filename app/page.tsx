@@ -70,16 +70,7 @@ export default function Home() {
           {isLoading ? (
             <p>Loading...</p>
           ) : (
-            data?.map((item: IMenu) => (
-              <MenuCard
-                key={item.id}
-                name={item.nama_menu}
-                price={item.harga}
-                image={item.gambar}
-                id={item.id}
-                harga={item.harga}
-              />
-            ))
+            data?.map((menu: IMenu) => <MenuCard key={menu.id} menu={menu} />)
           )}
         </div>
       </div>

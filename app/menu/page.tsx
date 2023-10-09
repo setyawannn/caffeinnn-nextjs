@@ -16,7 +16,7 @@ import {
 import Title from '@/components/reusable/Title'
 import axios from 'axios'
 import { getCookie } from 'cookies-next'
-import { useRouter } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { EditIcon } from '../user/icons/EyeIcon'
 import { DeleteIcon } from '../user/icons/DeleteIcon'
@@ -42,10 +42,16 @@ const MenuPage = () => {
   const router = useRouter()
 
   const token = getCookie('jwtToken')
+  const role = getCookie('role')
+
+  if (role !== 'ADMIN') {
+    redirect('/404')
+  }
 
   useEffect(() => {
     try {
       setIsLoading(true)
+
       const getMenu = async () => {
         axios
           .get(`${process.env.NEXT_PUBLIC_API_URL}/menu`, {

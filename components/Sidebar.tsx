@@ -1,18 +1,64 @@
-'use client'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import React from 'react'
 import { LuStore, LuClipboard, LuMenu, LuLogOut, LuUser2 } from 'react-icons/lu'
+import { deleteCookie, getCookie, hasCookie } from 'cookies-next'
+import { redirect, usePathname, useRouter } from 'next/navigation'
 
-const ListNav = [
-  { value: 'Home', href: '/', icon: <LuStore size={24} /> },
-  { value: 'Menu', href: '/menu', icon: <LuClipboard size={24} /> },
-  { value: 'Bills', href: '/bills', icon: <LuMenu size={24} /> },
-  { value: 'User', href: '/user', icon: <LuUser2 size={24} /> }
-]
+type MenuDataItem = {
+  value: string
+  href: string
+  icon: JSX.Element
+}
+
+type MenuData = {
+  [role: string]: MenuDataItem[]
+}
+
+type MenuProps = {
+  role: string
+}
+
+const menuData = {
+  KASIR: [
+    { value: 'Home', href: '/', icon: <LuStore size={24} /> },
+    { value: 'Bills', href: '/bills', icon: <LuMenu size={24} /> }
+  ],
+  ADMIN: [
+    { value: 'Menu', href: '/menu', icon: <LuClipboard size={24} /> },
+    { value: 'Bills', href: '/bills', icon: <LuMenu size={24} /> },
+    { value: 'User', href: '/user', icon: <LuUser2 size={24} /> }
+  ],
+  MANAGER: [
+    { value: 'Menu', href: '/menu', icon: <LuClipboard size={24} /> },
+    { value: 'Home', href: '/', icon: <LuStore size={24} /> }
+  ]
+}
 
 const Sidebar = () => {
+  const [menuItems, setMenuItems] = useState<any>([])
   const pathname = usePathname()
+  if (!hasCookie('jwtToken')) {
+    redirect('/login')
+  }
+
+  useEffect(() => {
+    // Baca nilai dari cookie "role"
+    const cookieRole = getCookie('role')
+
+    // Mendapatkan daftar sesuai dengan peran dari menuData
+    const roleMenuData = menuData[cookieRole] || []
+
+    setMenuItems(roleMenuData)
+
+    if (!hasCookie('jwtToken')) {
+      redirect('/login')
+    }
+  }, [])
+
+  const handleLogout = () => {
+    deleteCookie('jwtToken')
+    deleteCookie('role')
+  }
 
   return (
     <div className='flex h-full flex-col items-center p-4'>
@@ -21,7 +67,7 @@ const Sidebar = () => {
       </div>
       <div className='flex h-5/6 w-full flex-col justify-between'>
         <div className='mt-4 flex w-full flex-col gap-y-6'>
-          {ListNav.map((item, index) => (
+          {menuItems?.map((item: any, index: number) => (
             <Link
               key={index}
               href={
@@ -39,8 +85,9 @@ const Sidebar = () => {
           ))}
         </div>
         <Link
-          href={'/logout'}
-          className={`flex w-full cursor-pointer flex-col items-center justify-center gap-y-1 rounded-xl bg-white py-4 text-base font-normal text-zinc-400 duration-200 hover:text-danger`}
+          onClick={handleLogout}
+          href='/login'
+          className='flex w-full cursor-pointer flex-col items-center justify-center gap-y-1 rounded-xl bg-white py-4 text-base font-normal text-zinc-400 duration-200 hover:text-danger'
         >
           <LuLogOut />
           Logout
