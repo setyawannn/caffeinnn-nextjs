@@ -76,6 +76,8 @@ export default function Home() {
                 name={item.nama_menu}
                 price={item.harga}
                 image={item.gambar}
+                id={item.id}
+                harga={item.harga}
               />
             ))
           )}

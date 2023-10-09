@@ -1,10 +1,11 @@
 'use client'
 import { HeartFilledIcon } from '@/components/icons'
 import React, { useState } from 'react'
-import { setCookie } from 'cookies-next'
+import { hasCookie, setCookie } from 'cookies-next'
 import { api } from '@/utils/api'
-import { useRouter } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 import { Button, Input } from '@nextui-org/react'
+import toast from 'react-hot-toast'
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,12 @@ const Login = () => {
   })
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+
+  // React.useEffect(() => {
+  //   if (hasCookie('jwtToken')) {
+  //     redirect('/')
+  //   }
+  // }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -31,6 +38,7 @@ const Login = () => {
       .then(res => {
         const token = res.data.data.token
         const role = res.data.data.user.role
+        const code = res.data.code
 
         if (token && role) {
           setCookie('jwtToken', token, { maxAge: 2.5 * 60 * 60 * 1000 })
@@ -39,6 +47,13 @@ const Login = () => {
             ? router.push('/?category=Makanan')
             : router.push('/')
         }
+
+        if (code === 200) {
+          toast.success('Berhasil Login!')
+        }
+      })
+      .catch(err => {
+        console.log(err)
       })
       .finally(() => {
         setIsLoading(false)

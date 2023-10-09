@@ -2,13 +2,13 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React from 'react'
-import { LuStore, LuClipboard, LuMenu, LuLogOut } from 'react-icons/lu'
+import { LuStore, LuClipboard, LuMenu, LuLogOut, LuUser2 } from 'react-icons/lu'
 
 const ListNav = [
   { value: 'Home', href: '/', icon: <LuStore size={24} /> },
   { value: 'Menu', href: '/menu', icon: <LuClipboard size={24} /> },
   { value: 'Bills', href: '/bills', icon: <LuMenu size={24} /> },
-  { value: 'User', href: '/user', icon: <LuMenu size={24} /> }
+  { value: 'User', href: '/user', icon: <LuUser2 size={24} /> }
 ]
 
 const Sidebar = () => {

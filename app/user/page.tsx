@@ -2,12 +2,7 @@
 import Title from '@/components/reusable/Title'
 import {
   Button,
-  Chip,
   Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
   Table,
   TableBody,
   TableCell,
@@ -25,6 +20,9 @@ import { IUser } from '@/types/user-types'
 import axios from 'axios'
 import { getCookie } from 'cookies-next'
 import ModalUser from './ModalUser'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import toast from 'react-hot-toast'
 
 const statusColorMap: Record<string, any> = {
   kasir: 'success',
@@ -40,11 +38,12 @@ const columns = [
   { name: 'ACTIONS', uid: 'actions' }
 ]
 
-const MenuPage = () => {
+const UserPage = () => {
   const [users, setUsers] = useState<IUser[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const [modalOpen, setModalOpen] = useState(false)
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
+
+  const router = useRouter()
 
   const token = getCookie('jwtToken')
 
@@ -70,53 +69,63 @@ const MenuPage = () => {
     setIsLoading(false)
   }, [token])
 
-  const renderCell = React.useCallback((user: any, columnKey: any) => {
-    const cellValue = user[columnKey]
+  const renderCell = React.useCallback(
+    (user: any, columnKey: any, id: number, name: string) => {
+      const cellValue = user[columnKey]
 
-    switch (columnKey) {
-      case 'id':
-        return (
-          <div className='flex flex-col'>
-            <p className='text-bold text-sm'>{user.id}</p>
-          </div>
-        )
-      case 'name':
-        return (
-          <div>
-            <h4>{user.name}</h4>
-          </div>
-        )
-      case 'username':
-        return (
-          <div className='flex flex-col'>
-            <p className='text-bold text-sm capitalize'>{user.username}</p>
-          </div>
-        )
-      case 'role':
-        return (
-          <div>
-            <p>{user.role}</p>
-          </div>
-        )
-      case 'actions':
-        return (
-          <div className='relative flex items-center gap-2'>
-            <Tooltip content='Edit user'>
-              <span className='cursor-pointer text-lg text-default-400 active:opacity-50'>
-                <EditIcon />
-              </span>
-            </Tooltip>
-            <Tooltip color='danger' content='Delete user'>
-              <span className='cursor-pointer text-lg text-danger active:opacity-50'>
-                <DeleteIcon />
-              </span>
-            </Tooltip>
-          </div>
-        )
-      default:
-        return cellValue
-    }
-  }, [])
+      switch (columnKey) {
+        case 'id':
+          return (
+            <div className='flex flex-col'>
+              <p className='text-bold text-sm'>{user.id}</p>
+            </div>
+          )
+        case 'name':
+          return (
+            <div>
+              <h4>{user.name}</h4>
+            </div>
+          )
+        case 'username':
+          return (
+            <div className='flex flex-col'>
+              <p className='text-bold text-sm capitalize'>{user.username}</p>
+            </div>
+          )
+        case 'role':
+          return (
+            <div>
+              <p>{user.role}</p>
+            </div>
+          )
+        case 'actions':
+          return (
+            <div className='relative flex items-center gap-2'>
+              <Tooltip content='Edit user'>
+                <Link
+                  onClick={onOpen}
+                  href={`user?action=edit&id=${id}`}
+                  className='cursor-pointer text-lg text-default-400 active:opacity-50'
+                >
+                  <EditIcon />
+                </Link>
+              </Tooltip>
+              <Tooltip color='danger' content='Delete user'>
+                <span
+                  // onClick={() => handleDelete(id, name)}
+                  className='cursor-pointer text-lg text-danger active:opacity-50'
+                >
+                  <DeleteIcon />
+                </span>
+              </Tooltip>
+            </div>
+          )
+        default:
+          return cellValue
+      }
+    },
+    [onOpen]
+  )
 
   return (
     <>
@@ -134,8 +143,9 @@ const MenuPage = () => {
         <div className='mt-6'>
           <div className='mb-4'>
             <Button
-              onClick={onOpen}
-              color='success'
+              onPress={onOpen}
+              onClick={() => router.push(`user?action=add`)}
+              color='primary'
               className='text-white'
               radius='sm'
             >
@@ -157,7 +167,9 @@ const MenuPage = () => {
               {item => (
                 <TableRow key={item.id}>
                   {columnKey => (
-                    <TableCell>{renderCell(item, columnKey)}</TableCell>
+                    <TableCell>
+                      {renderCell(item, columnKey, item.id, item.name)}
+                    </TableCell>
                   )}
                 </TableRow>
               )}
@@ -169,4 +181,4 @@ const MenuPage = () => {
   )
 }
 
-export default MenuPage
+export default UserPage

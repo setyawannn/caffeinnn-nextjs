@@ -18,7 +18,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         {children}
       </div>
       {pathname === '/' ? (
-        <div className='min-w-[34rem] p-6'>
+        <div className='hidden min-w-[34rem] p-6 lg:block'>
           <Cart />
         </div>
       ) : null}
